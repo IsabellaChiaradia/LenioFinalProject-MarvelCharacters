@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import './App.css';
 
 function App() {
@@ -19,6 +19,7 @@ function App() {
             },
           }
         );
+
         setPersonajes(response.data.data.results);
       } catch (error) {
         console.log(error);
@@ -28,31 +29,39 @@ function App() {
     fetchData();
   }, []);
 
-  const getRandomCharacters = () => {
-    const shuffledCharacters = [...personajes].sort(() => 0.5 - Math.random());
-    const randomCharacters = shuffledCharacters.slice(0, 8);
-    return randomCharacters;
-  };
+  const sortedCharacters = useMemo(() => {
+    return [...personajes].sort((a, b) => a.name.localeCompare(b.name));
+  }, [personajes]);
 
-  const randomCharacters = getRandomCharacters();
+  const randomCharacters = useMemo(() => {
+    const shuffledCharacters = [...sortedCharacters].sort(() => 0.5 - Math.random());
+    return shuffledCharacters;
+  }, [sortedCharacters]);
+
+  const isValidThumbnail = (thumbnail) => {
+    // Check if the thumbnail path exists and is not a default placeholder image
+    return thumbnail && !thumbnail.path.includes('image_not_available');
+  };
 
   return (
     <div className="App">
       <h1>Marvel</h1>
       <div className="container">
         {randomCharacters.map((per) => (
-          <div className="col" key={per.id}>
-            <div className="card">
-              <img
-                src={`${per.thumbnail.path}.${per.thumbnail.extension}`}
-                className="character-img"
-                alt={`${per.name} image`}
-              />
-              <div className="card-body">
-                <p className="character-name">{per.name}</p>
+          isValidThumbnail(per.thumbnail) && ( // Check if the thumbnail is valid
+            <div className="col" key={per.id}>
+              <div className="card">
+                <img
+                  src={`${per.thumbnail.path}.${per.thumbnail.extension}`}
+                  className="character-img"
+                  alt={`${per.name} image`}
+                />
+                <div className="card-body">
+                  <p className="character-name">{per.name}</p>
+                </div>
               </div>
             </div>
-          </div>
+          )
         ))}
       </div>
     </div>
