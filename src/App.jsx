@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect, useMemo } from 'react';
 import './App.css';
+import { SearchBar } from './components/search-bar/SearchBar';
 
 function App() {
   const [personajes, setPersonajes] = useState([]);
@@ -45,7 +46,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Marvel</h1>
+      <SearchBar />
       <div className="container">
         {randomCharacters.map((per) => (
           isValidThumbnail(per.thumbnail) && ( // Check if the thumbnail is valid
