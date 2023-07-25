@@ -5,6 +5,8 @@ import { SearchBar } from './components/search-bar/SearchBar';
 
 function App() {
   const [personajes, setPersonajes] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,30 +42,62 @@ function App() {
   }, [sortedCharacters]);
 
   const isValidThumbnail = (thumbnail) => {
-    // Check if the thumbnail path exists and is not a default placeholder image
     return thumbnail && !thumbnail.path.includes('image_not_available');
   };
 
+  const handleSearch = (query) => {
+    const filteredCharacters = personajes.filter((character) =>
+      character.name.toLowerCase().includes(query.toLowerCase())
+    );
+    setSearchResults(filteredCharacters);
+  };
+
+  useEffect(() => {
+    setSearchResults([]); 
+    if (searchQuery.trim() !== '') {
+      handleSearch(searchQuery);
+    }
+  }, [searchQuery]);
+
   return (
     <div className="App">
-      <SearchBar />
+      <SearchBar onSearch={setSearchQuery} />
       <div className="container">
-        {randomCharacters.map((per) => (
-          isValidThumbnail(per.thumbnail) && ( // Check if the thumbnail is valid
-            <div className="col" key={per.id}>
-              <div className="card">
-                <img
-                  src={`${per.thumbnail.path}.${per.thumbnail.extension}`}
-                  className="character-img"
-                  alt={`${per.name} image`}
-                />
-                <div className="card-body">
-                  <p className="character-name">{per.name}</p>
+        {searchResults.length > 0 ? (
+          searchResults.map((per) => (
+            isValidThumbnail(per.thumbnail) && (
+              <div className="col" key={per.id}>
+                <div className="card">
+                  <img
+                    src={`${per.thumbnail.path}.${per.thumbnail.extension}`}
+                    className="character-img"
+                    alt={`${per.name} image`}
+                  />
+                  <div className="card-body">
+                    <p className="character-name">{per.name}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          )
-        ))}
+            )
+          ))
+        ) : (          
+          randomCharacters.map((per) => (
+            isValidThumbnail(per.thumbnail) && (
+              <div className="col" key={per.id}>
+                <div className="card">
+                  <img
+                    src={`${per.thumbnail.path}.${per.thumbnail.extension}`}
+                    className="character-img"
+                    alt={`${per.name} image`}
+                  />
+                  <div className="card-body">
+                    <p className="character-name">{per.name}</p>
+                  </div>
+                </div>
+              </div>
+            )
+          ))
+        )}
       </div>
     </div>
   );
