@@ -4,13 +4,17 @@ import { useCharacters } from '../../context/context.jsx';
 import './Characters.css';
 import { SearchBar } from '../search-bar/SearchBar.jsx';
 import { useNavigate } from 'react-router-dom';
+import CharacterModal from './CharacterModal';
 
 const Characters = () => {
   const { searchQuery, searchResults, setSearchResults } = useCharacters();
   const [allCharacters, setAllCharacters] = useState([]);
   const navigate = useNavigate();
+  const [selectedCharacter, setSelectedCharacter] = useState(null);
+  const [favoriteComics, setFavoriteComics] = useState([]);
 
   useEffect(() => {
+    // Fetch all characters from the API and store in state
     const fetchData = async () => {
       try {
         const totalPages = 16;
@@ -71,9 +75,45 @@ const Characters = () => {
     }
   };
 
-  const handleCharacterClick = (character) => {
-    const characterPath = encodeURIComponent(character.name);
-    navigate(`/${characterPath}`); // Navigate to the character's path URL
+  const handleCharacterClick = async (character) => {
+    try {
+      const response = await axios.get(
+        `https://gateway.marvel.com:443/v1/public/characters/${character.id}/comics`,
+        {
+          params: {
+            ts: '1',
+            apikey: '4033a8ca4f424d8ad5066be57a6e5a5e',
+            hash: '2ddbfdc5dd62b6adf7eefaf0c854ba0d',
+          },
+        }
+      );
+      const comicsData = response.data.data.results;
+      const characterWithComics = {
+        ...character,
+        comics: comicsData,
+      };
+      setSelectedCharacter(characterWithComics);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const closeModal = () => {
+    setSelectedCharacter(null);
+  };
+
+  const handleToggleFavorite = (comic) => {
+    if (isComicInFavorites(comic)) {
+      setFavoriteComics((prevFavorites) =>
+        prevFavorites.filter((favComic) => favComic.id !== comic.id)
+      );
+    } else {
+      setFavoriteComics((prevFavorites) => [...prevFavorites, comic]);
+    }
+  };
+
+  const isComicInFavorites = (comic) => {
+    return favoriteComics.some((favComic) => favComic.id === comic.id);
   };
 
   return (
@@ -82,7 +122,11 @@ const Characters = () => {
       {searchResults.length > 0 ? (
         searchResults.map((per) =>
           isValidThumbnail(per.thumbnail) ? (
-            <div className="col" key={per.id} onClick={() => handleCharacterClick(per)}>
+            <div
+              className="col"
+              key={per.id}
+              onClick={() => handleCharacterClick(per)}
+            >
               <div className="card">
                 <img
                   src={`${per.thumbnail.path}.${per.thumbnail.extension}`}
@@ -99,7 +143,11 @@ const Characters = () => {
       ) : (
         randomCharacters.map((per) =>
           isValidThumbnail(per.thumbnail) ? (
-            <div className="col" key={per.id} onClick={() => handleCharacterClick(per)}>
+            <div
+              className="col"
+              key={per.id}
+              onClick={() => handleCharacterClick(per)}
+            >
               <div className="card">
                 <img
                   src={`${per.thumbnail.path}.${per.thumbnail.extension}`}
@@ -113,6 +161,15 @@ const Characters = () => {
             </div>
           ) : null
         )
+      )}
+
+      {selectedCharacter && (
+        <CharacterModal
+          character={selectedCharacter}
+          onClose={closeModal}
+          favoriteComics={favoriteComics}
+          onToggleFavorite={handleToggleFavorite}
+        />
       )}
     </div>
   );
