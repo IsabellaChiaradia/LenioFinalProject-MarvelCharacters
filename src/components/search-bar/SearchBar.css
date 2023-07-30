@@ -65,3 +65,29 @@
     color: gold; 
   }
   
+  @media (max-width: 600px) {
+    .navbar {
+      justify-content: space-between;
+      padding: 8px;
+      height: 45px;
+    }
+  
+    .marvel-logo {
+      height: 1.5rem;
+      margin-right: 8px;
+    }
+  
+    .vertical-bar {
+      font-size: 1.5rem;
+    }
+  
+    input {
+      width: 120px;
+      font-size: 14px;
+    }
+
+    .star-icon {
+      margin-right: 10px;
+    }
+  }
+  
