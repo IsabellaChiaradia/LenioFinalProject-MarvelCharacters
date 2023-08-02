@@ -28,7 +28,7 @@ The Marvel Characters Searcher is a web application that allows users to explore
 
 To run the Marvel Characters Searcher locally, follow these steps:
 
-1. Clone the repository: `git clone git@github.com:IsabellaChiaradia/marvel-characters.git`
+1. Clone the repository: `git clone git@github.com:IsabellaChiaradia/LenioFinalProject-MarvelCharacters.git`
 
 2. Install dependencies: `npm install`
 
@@ -40,7 +40,7 @@ The application will be accessible at `http://localhost:3000/`.
 
 - This project uses the Marvel API to fetch character and comic book data. For more information, visit [https://developer.marvel.com](https://developer.marvel.com).
 
-- The application is built with React.js and utilizes Jotai for state management.
+- The application is built with React.js.
 
 ## License
 
