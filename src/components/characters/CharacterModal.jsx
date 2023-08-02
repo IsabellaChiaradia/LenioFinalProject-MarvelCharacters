@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect} from 'react';
 import FavoriteStar from '../FavoriteStar/FavoriteStar.jsx';
 import './CharacterModal.css';
 
@@ -7,10 +7,12 @@ const CharacterModal = ({ character, onClose, favoriteComics, onToggleFavorite }
     return favoriteComics.some((favComic) => favComic.id === comic.id);
   };
 
+  useEffect(() => {
+    console.log('Comics in favorites:', favoriteComics);
+  }, [favoriteComics]);
+
   const handleComicFavoriteToggle = (comic) => {
     onToggleFavorite(comic);
-
-    console.log('Comics in favorites:', favoriteComics);
   };
 
   return (
