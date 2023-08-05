@@ -32,7 +32,7 @@ To run the Marvel Characters Searcher locally, follow these steps:
 
 2. Install dependencies: `npm install`
 
-3. Start the development server: `npm run start`
+3. Start the development server: `npm run dev`
 
 The application will be accessible at `http://localhost:3000/`.
 
